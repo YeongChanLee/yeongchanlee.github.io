@@ -1,4 +1,84 @@
 <!DOCTYPE html>
 <html>
-    
+<head>
+	<title>R Tutorial</title>
+	<!-- Add Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<style>
+	/* Style the tutorial section */
+	#tutorial {
+		padding: 20px;
+	}
+	/* Style the menu section */
+	#menu {
+		background-color: #f8f8f8;
+		height: 100%;
+	}
+	#menu ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	#menu li a {
+		display: block;
+		padding: 10px;
+		color: #333;
+		border-bottom: 1px solid #ccc;
+	}
+	#menu li a:hover {
+		background-color: #eee;
+	}
+	#menu li.active a {
+		background-color: #337ab7;
+		color: #fff;
+	}
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div id="menu" class="col-sm-3">
+				<ul class="nav nav-pills nav-stacked">
+					<li role="presentation" class="active"><a href="#tutorial1" data-toggle="pill">Tutorial 1</a></li>
+					<li role="presentation"><a href="#tutorial2" data-toggle="pill">Tutorial 2</a></li>
+					<li role="presentation"><a href="#tutorial3" data-toggle="pill">Tutorial 3</a></li>
+					<li role="presentation"><a href="#chapter1" data-toggle="pill">Chapter 1</a></li>
+					<li role="presentation"><a href="#chapter2" data-toggle="pill">Chapter 2</a></li>
+					<li role="presentation"><a href="#chapter3" data-toggle="pill">Chapter 3</a></li>
+					<li role="presentation"><a href="#subchapter1" data-toggle="pill">Subchapter 1</a></li>
+					<li role="presentation"><a href="#subchapter2" data-toggle="pill">Subchapter 2</a></li>
+					<li role="presentation"><a href="#subchapter3" data-toggle="pill">Subchapter 3</a></li>
+				</ul>
+			</div>
+			<div id="tutorial" class="col-sm-9">
+				<div class="tab-content">
+					<div class="tab-pane fade in active" id="tutorial1">
+						<!-- Insert tutorial 1 content here -->
+						<h2>Tutorial 1</h2>
+						<p>This is tutorial 1.</p>
+					</div>
+					<div class="tab-pane fade" id="tutorial2">
+						<!-- Insert tutorial 2 content here -->
+						<h2>Tutorial 2</h2>
+						<p>This is tutorial 2.</p>
+					</div>
+					<div class="tab-pane fade" id="tutorial3">
+						<!-- Insert tutorial 3 content here -->
+						<h2>Tutorial 3</h2>
+						<p>This is tutorial 3.</p>
+					</div>
+					<div class="tab-pane fade" id="chapter1">
+						<!-- Insert chapter 1 content here -->
+						<h2>Chapter 1</h2>
+						<p>This is chapter 1.</p>
+					</div>
+				</div>
+			</div>
+        </div>
+	</div>
+    </body>
 </html>
+           
+                
+                
+               
