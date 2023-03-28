@@ -245,6 +245,11 @@ div.csl-indent {
   <a href="../../posts/04_Probability distribution and estimation/index.html" class="sidebar-item-text sidebar-link active">04_Probability distribution &amp; estimation</a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/05_Hypothesis testing/index.html" class="sidebar-item-text sidebar-link">05_Hypothesis testing</a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -259,7 +264,7 @@ div.csl-indent {
 
 
 <section id="확률분포" class="level2">
-<h2 class="anchored" data-anchor-id="확률분포">확률분포</h2>
+<h2 class="anchored" data-anchor-id="확률분포">4-1. 확률분포</h2>
 <p>4강을 통해서 다양한 확률분포에 대해 배웠습니다. 여기서는 R을 통해 확률분포를 어떻게 표현할 수 있는지 알아보겠습니다.</p>
 <section id="정규분포" class="level3">
 <h3 class="anchored" data-anchor-id="정규분포">정규분포</h3>
@@ -360,8 +365,8 @@ Attaching package: 'dplyr'</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1]  1.5916207 -1.6295060  0.6180563  0.5145275  1.2160666  1.6975639
- [7] -0.1844113  0.6712143  2.1851319  0.3895679</code></pre>
+<pre><code> [1]  1.69869894  0.02663649 -0.62638952 -0.23630300  0.10086453  1.00788479
+ [7] -0.47044318 -0.30578876 -1.24955006  0.67224746</code></pre>
 </div>
 </div>
 <p>그러면 rnorm에서 랜덤값 1000개 정도 추출하고 histogram을 그리면 정규분포와 비슷하게 그릴 수 있겠네요. 이렇게 랜덤한 값들을 추출할 경우 추출값들이 그때 그때 달라지게 됩니다. 연구의 재현성(reproducibility)을 위해서 랜덤 추출값이 고정되게 나오게끔 set.seed()함수를 사용합니다.</p>
