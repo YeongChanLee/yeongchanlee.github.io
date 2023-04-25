@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/10_Regression and correlation methods/index.html",
       "/posts/09_Data handling with R/index.html",
       "/posts/07_Categorical data analysis/index.html",
       "/posts/06_Nonparametric methods/index.html",
