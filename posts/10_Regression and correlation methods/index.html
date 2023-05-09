@@ -122,6 +122,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 }</script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -263,8 +264,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">10-0. Load data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dplyr' was built under R version 4.2.3</code></pre>
+</div>
 <div class="cell-output cell-output-stderr">
 <pre><code>
 Attaching package: 'dplyr'</code></pre>
@@ -279,7 +285,7 @@ Attaching package: 'dplyr'</code></pre>
 
     intersect, setdiff, setequal, union</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>
 Attaching package: 'data.table'</code></pre>
@@ -289,13 +295,40 @@ Attaching package: 'data.table'</code></pre>
 
     between, first, last</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/estriol.csv"</span>,<span class="at">data.table =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> (<span class="fu">cov</span>(est<span class="sc">$</span>ESTRIOL, est<span class="sc">$</span>BIRTHWEIGHT)<span class="sc">*</span><span class="dv">30</span>)<span class="sc">/</span>(<span class="fu">var</span>(est<span class="sc">$</span>ESTRIOL)<span class="sc">*</span><span class="dv">30</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> (<span class="fu">mean</span>(est<span class="sc">$</span>BIRTHWEIGHT) <span class="sc">-</span> (b <span class="sc">*</span> <span class="fu">mean</span>(est<span class="sc">$</span>ESTRIOL)))</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(BIRTHWEIGHT <span class="sc">~</span> ESTRIOL, <span class="at">data =</span> est)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Fundamentals of Biostatistics에 소개되어 있는 데이터를 활용해 회귀분석을 진행해봅시다. 먼저 estriol 데이터를 불러옵니다.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/i1.png" class="img-fluid figure-img" width="393"></p>
+<p></p><figcaption class="figure-caption">Fundamentals of Biostatistics, 8th ed.</figcaption><p></p>
+</figure>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>est <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/estriol.csv"</span>,<span class="at">data.table =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> est) <span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>ESTRIOL, <span class="at">y=</span>BIRTHWEIGHT)) <span class="sc">+</span> </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>(<span class="at">base_size=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>주어진 데이터를 직접 눈으로 확인하여 결측치가 있는지, 이상치(outlier)가 있는지 메인 분석 전에 미리 확인하는 것이 중요합니다. 이를 Exploratory Data Analysis (EDA)라고도 합니다. 지금은 Estriol과 Birthweight간 그래프를 그려 확인해보았습니다. 선형성이 보이나요?</p>
+<p>다음으로는 회귀분석을 해보겠습니다. Linear regression은 다음과 같은 모형을 가집니다.</p>
+<p><span class="math display">\[
+y=\alpha+\beta x+ e
+\]</span></p>
+<p>회귀분석을 하는 기본 함수는 lm입니다. 그리고 (BIRTHWEIGHT ~ ESTRIOL) 이렇게 써져있는 것처럼 formula에 대해서 익숙해져야합니다. 수식을 쓴다고 생각하면 쉬울 수 있습니다. 내가 만들고자하는 모형에서 y에 해당하는 변수가 물결(~)의 왼쪽, x에 해당하는 변수가 오른쪽으로 나열되면 됩니다. 지금은 BIRTHWEIGHT가 y이기 때문에 왼쪽, ESTRIOL이 x이기 때문에 오른쪽에 위치하게 됩니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(BIRTHWEIGHT <span class="sc">~</span> ESTRIOL, <span class="at">data =</span> est)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> (<span class="fu">cov</span>(est<span class="sc">$</span>ESTRIOL, est<span class="sc">$</span>BIRTHWEIGHT)<span class="sc">*</span><span class="dv">30</span>)<span class="sc">/</span>(<span class="fu">var</span>(est<span class="sc">$</span>ESTRIOL)<span class="sc">*</span><span class="dv">30</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> (<span class="fu">mean</span>(est<span class="sc">$</span>BIRTHWEIGHT) <span class="sc">-</span> (b <span class="sc">*</span> <span class="fu">mean</span>(est<span class="sc">$</span>ESTRIOL)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>model을 해석하기 위해서는 summary()함수를 씁니다. 다양한 정보가 있는데 우리는 Coefficients, R-squared, F test에 대한 p-value정도를 확인하면 됩니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -316,7 +349,7 @@ Residual standard error: 3.821 on 29 degrees of freedom
 Multiple R-squared:  0.3718,    Adjusted R-squared:  0.3501 
 F-statistic: 17.16 on 1 and 29 DF,  p-value: 0.0002712</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -328,15 +361,459 @@ Residuals 29 423.43  14.601
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
+<p>Estriol 변수에 대한 추정량 <span class="math inline">\(\beta\)</span>가 0.6082라고 계산이 되었고 p-value가 0.05보다 작기 때문에 통계적으로 유의한 변수라고 결론내릴 수 있습니다.</p>
+<p>모델 자체가 의미있는지를 확인하기 위해서는 F test의 p-value를 확인합니다. 지금은 univariable linear regression이기 때문에 베타의 p-value랑 동일하고 역시 유의하다고 볼 수 있습니다. 이 결과를 사용하여 다음과 같은 회귀식을 만들 수 있습니다.</p>
+<p><span class="math display">\[
+Birthweight=21.5234+0.6082*Estriol
+\]</span></p>
+<p>그럼 새로운 데이터가 들어왔을 때 예상되는 birthweight를 추정해볼 수 있겠습니다. Estriol이 15인 새로운 데이터가 생겼다고 가정합시다. 새로운 데이터를 모델에 넣어 y가 어떻게 나오는지 확인하고자할 땐 predict()함수를 사용합니다.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lm_fit, <span class="fu">data.frame</span>(<span class="at">ESTRIOL=</span><span class="dv">15</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(lm_fit, <span class="fu">data.frame</span>(<span class="at">ESTRIOL=</span><span class="dv">15</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       1 
 30.64629 </code></pre>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/hyp_ihd_cohort.csv"</span>, <span class="at">data.table =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="fu">filter</span>(data, HYP <span class="sc">==</span> <span class="dv">1</span>)<span class="sc">$</span>TOT_CHOL, <span class="fu">filter</span>(data, HYP <span class="sc">==</span> <span class="dv">0</span>)<span class="sc">$</span>TOT_CHOL)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  filter(data, HYP == 1)$TOT_CHOL and filter(data, HYP == 0)$TOT_CHOL
+t = 3.7837, df = 495.11, p-value = 0.0001735
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+  4.138246 13.078552
+sample estimates:
+mean of x mean of y 
+ 201.5006  192.8922 </code></pre>
+</div>
+</div>
+<p>이번엔 중간고사 데이터를 다시 불러와보겠습니다. 그리고 범주형 변수인 HYP를 x변수로 두고 연속형 변수 TOT_CHOL을 y로 두어 분석해보겠습니다. 원래와 같이 two-sample t test를 하면 다음과 같이 나옵니다.</p>
+<p>이전에 배운 two-sample t test와 연결지어서 어떤 공통점이 있는지 확인해보세요. 회귀분석은 등분산성을 가정하고 있기 때문에 two-sample t test에서는 등분산성을 가정한 결과와 동일하게 나옵니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(TOT_CHOL <span class="sc">~</span> <span class="fu">factor</span>(HYP), <span class="at">data=</span>data)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = TOT_CHOL ~ factor(HYP), data = data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-83.892 -24.559  -2.113  19.983 155.608 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   192.892      1.135 169.921  &lt; 2e-16 ***
+factor(HYP)1    8.608      2.268   3.795 0.000155 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 33.5 on 1160 degrees of freedom
+Multiple R-squared:  0.01226,   Adjusted R-squared:  0.01141 
+F-statistic:  14.4 on 1 and 1160 DF,  p-value: 0.0001553</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="fu">filter</span>(data, HYP <span class="sc">==</span> <span class="dv">1</span>)<span class="sc">$</span>TOT_CHOL, <span class="fu">filter</span>(data, HYP <span class="sc">==</span> <span class="dv">0</span>)<span class="sc">$</span>TOT_CHOL, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Two Sample t-test
+
+data:  filter(data, HYP == 1)$TOT_CHOL and filter(data, HYP == 0)$TOT_CHOL
+t = 3.7949, df = 1160, p-value = 0.0001553
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+  4.15773 13.05907
+sample estimates:
+mean of x mean of y 
+ 201.5006  192.8922 </code></pre>
+</div>
+</div>
+</section>
+<section id="multivariable-linear-regression---regression과-anova" class="level2">
+<h2 class="anchored" data-anchor-id="multivariable-linear-regression---regression과-anova">Multivariable linear regression - regression과 ANOVA</h2>
+<p>이번엔 BP_SYS 변수를 활용해 고혈압 그룹을 새롭게 정의하여 세 군으로 만들어보겠습니다. (정상, 고혈압 1기, 고혈압 2기)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>HYP2 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(data<span class="sc">$</span>BP_SYS <span class="sc">&lt;</span> <span class="dv">140</span>, <span class="dv">0</span>, </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">ifelse</span>(<span class="fu">between</span>(data<span class="sc">$</span>BP_SYS, <span class="dv">140</span>, <span class="dv">160</span>), <span class="dv">1</span>, </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">ifelse</span>(data<span class="sc">$</span>BP_SYS <span class="sc">&gt;</span> <span class="dv">160</span>, <span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>)))</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(data<span class="sc">$</span>HYP2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   0    1    2 
+1043  103   16 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(HYP2) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">MEAN_SBP =</span> <span class="fu">mean</span>(BP_SYS), </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">SD_SBP =</span> <span class="fu">sd</span>(BP_SYS),</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">MEAN_BMI =</span> <span class="fu">mean</span>(BMI), </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">SD_BMI =</span> <span class="fu">sd</span>(BMI))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+   HYP2 MEAN_SBP SD_SBP MEAN_BMI SD_BMI
+  &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
+1     0     119.  10.9      23.5   3.18
+2     1     145.   4.68     25.2   3.46
+3     2     172.   9.12     26.1   2.61</code></pre>
+</div>
+</div>
+<p>회귀분석도 해보겠습니다. y는 BMI, x는 HYP2로 해봅시다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(BMI <span class="sc">~</span> <span class="fu">factor</span>(HYP2), <span class="at">data=</span>data)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = BMI ~ factor(HYP2), data = data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.8620 -2.2558 -0.1334  1.9380 13.8380 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   23.46202    0.09918 236.549  &lt; 2e-16 ***
+factor(HYP2)1  1.77140    0.33084   5.354 1.04e-07 ***
+factor(HYP2)2  2.64423    0.80692   3.277  0.00108 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.203 on 1159 degrees of freedom
+Multiple R-squared:  0.03188,   Adjusted R-squared:  0.03021 
+F-statistic: 19.08 on 2 and 1159 DF,  p-value: 7.017e-09</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(lm_fit) <span class="co"># 같은 f statistic과 pvalue</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: BMI
+               Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+factor(HYP2)    2   391.6 195.798  19.082 7.017e-09 ***
+Residuals    1159 11892.1  10.261                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>이번엔 <strong>ANOVA</strong>와 비교해봅시다. 세 집단의 평균의 차이를 볼 땐 ANOVA를 실시합니다.</p>
+<p>귀무가설: 그룹간 평균의 차이가 없다.</p>
+<p>대립가설: 적어도 한 그룹은 나머지 그룹의 평균과 차이가 있다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>aov_fit <span class="ot">&lt;-</span> <span class="fu">aov</span>(BMI <span class="sc">~</span> <span class="fu">factor</span>(HYP2), <span class="at">data=</span>data)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(aov_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+factor(HYP2)    2    392  195.80   19.08 7.02e-09 ***
+Residuals    1159  11892   10.26                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">TukeyHSD</span>(aov_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = BMI ~ factor(HYP2), data = data)
+
+$`factor(HYP2)`
+         diff        lwr      upr     p adj
+1-0 1.7713976  0.9950081 2.547787 0.0000003
+2-0 2.6442334  0.7506084 4.537858 0.0030995
+2-1 0.8728358 -1.1471253 2.892797 0.5681241</code></pre>
+</div>
+</div>
+<p>이 때, ANOVA가 결과가 회귀분석에서의 F statistic과 동일합니다. 사실 둘의 분석 방법이 같기 때문입니다. Tukey multiple comparisons으로 어느 그룹끼리의 차이가 있는지도 확인할 수 있습니다.</p>
+</section>
+<section id="hypertension-예시" class="level2">
+<h2 class="anchored" data-anchor-id="hypertension-예시">Hypertension 예시</h2>
+<p>이번엔 새로운 데이터 hyp_ped를 불러와 multivariable linear regression을 수행할 것입니다. 가설은 “infant SBP가 Age와 Birthweight와 연관되어 있을 것이다.” 입니다. 직접 분석을 수행하고 결론을 내려보세요.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>hyp_ped <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/hyp_ped.csv"</span>, <span class="at">data.table =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> AGE <span class="sc">+</span> BIRTHWEIGHT, <span class="at">data =</span> hyp_ped)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = SBP ~ AGE + BIRTHWEIGHT, data = hyp_ped)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.0438 -1.3481 -0.2395  0.9688  6.6964 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 53.45019    4.53189  11.794 2.57e-08 ***
+AGE          5.88772    0.68021   8.656 9.34e-07 ***
+BIRTHWEIGHT  0.12558    0.03434   3.657   0.0029 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.479 on 13 degrees of freedom
+Multiple R-squared:  0.8809,    Adjusted R-squared:  0.8626 
+F-statistic: 48.08 on 2 and 13 DF,  p-value: 9.844e-07</code></pre>
+</div>
+</div>
+</section>
+<section id="결정계수와-상관계수" class="level2">
+<h2 class="anchored" data-anchor-id="결정계수와-상관계수">결정계수와 상관계수</h2>
+<p>바로 위 모델에서 결정계수는 몇인가요? 수정된 결정계수를 보니 0.86정도로 1에 가까워 설명력이 높다고 생각할 수 있습니다. 물론 꼭 그런건 아니고 이것도 분야, 모델 등마다 다르긴 합니다.</p>
+<p>estriol 데이터를 활용해서 상관계수에 대해 알아봅시다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(BIRTHWEIGHT <span class="sc">~</span> ESTRIOL, <span class="at">data =</span> est)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = BIRTHWEIGHT ~ ESTRIOL, data = est)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.1200 -2.0381 -0.0381  3.3537  6.8800 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  21.5234     2.6204   8.214 4.68e-09 ***
+ESTRIOL       0.6082     0.1468   4.143 0.000271 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.821 on 29 degrees of freedom
+Multiple R-squared:  0.3718,    Adjusted R-squared:  0.3501 
+F-statistic: 17.16 on 1 and 29 DF,  p-value: 0.0002712</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(est<span class="sc">$</span>ESTRIOL, est<span class="sc">$</span>BIRTHWEIGHT) <span class="co"># Pearson's correlation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6097313</code></pre>
+</div>
+</div>
+<p>corrplot()라는 함수를 활용해 다음과 같은 그래프도 그릴 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("corrplot")</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'corrplot' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>corrplot 0.92 loaded</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>est2 <span class="ot">&lt;-</span> <span class="fu">select</span>(est, <span class="sc">-</span>PERSON_ID)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(<span class="fu">cor</span>(est2), <span class="at">method=</span><span class="st">"number"</span>, <span class="at">type=</span><span class="st">"upper"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(<span class="fu">cor</span>(hyp_ped), <span class="at">method=</span><span class="st">"number"</span>, <span class="at">type=</span><span class="st">"upper"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>univariable analysis에서 계산된 결정계수는 상관계수의 제곱과 동일합니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>lm_fit_sum <span class="ot">&lt;-</span> <span class="fu">summary</span>(lm_fit)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>lm_fit_sum<span class="sc">$</span>r.squared <span class="sc">==</span> <span class="fu">cor</span>(est<span class="sc">$</span>ESTRIOL, est<span class="sc">$</span>BIRTHWEIGHT)<span class="sc">^</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="변수선택법" class="level2">
+<h2 class="anchored" data-anchor-id="변수선택법">변수선택법</h2>
+<p>이번엔 중간고사 데이터(data)를 활용하여 모델을 만든 후 변수선택법을 통해 최적의 모델을 선정해볼 것입니다. 변수선택법 중에 잘 쓰이는 stepwise selection을 해볼 것입니다. R로 쉽게 적용할 수 있고 함수는 step입니다. 이 때 예제로 쓰이는 모델의 y가 무엇이고 x가 무엇인가요?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(BMI <span class="sc">~</span> <span class="fu">factor</span>(SEX) <span class="sc">+</span> AGE <span class="sc">+</span> BP_SYS <span class="sc">+</span> TOT_CHOL <span class="sc">+</span> <span class="fu">factor</span>(HYP2), <span class="at">data=</span>data)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = BMI ~ factor(SEX) + AGE + BP_SYS + TOT_CHOL + factor(HYP2), 
+    data = data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.2829 -1.9999 -0.1485  1.7210 14.0853 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   11.090102   1.120582   9.897  &lt; 2e-16 ***
+factor(SEX)2  -0.855703   0.181585  -4.712 2.75e-06 ***
+AGE            0.002792   0.005978   0.467    0.641    
+BP_SYS         0.079033   0.008867   8.913  &lt; 2e-16 ***
+TOT_CHOL       0.016804   0.002639   6.368 2.75e-10 ***
+factor(HYP2)1 -0.490342   0.375019  -1.308    0.191    
+factor(HYP2)2 -1.379186   0.885499  -1.558    0.120    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.971 on 1155 degrees of freedom
+Multiple R-squared:  0.1701,    Adjusted R-squared:  0.1657 
+F-statistic: 39.44 on 6 and 1155 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>지금 모델에서 stepwise selection을 적용해 더 나은 모델을 찾아볼 것입니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>final_model <span class="ot">&lt;-</span> <span class="fu">step</span>(lm_fit) <span class="co">#forward로 하고 싶으면 direction="forward"을 넣습니다.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Start:  AIC=2537.55
+BMI ~ factor(SEX) + AGE + BP_SYS + TOT_CHOL + factor(HYP2)
+
+               Df Sum of Sq   RSS    AIC
+- AGE           1      1.93 10197 2535.8
+- factor(HYP2)  2     27.74 10222 2536.7
+&lt;none&gt;                      10195 2537.6
+- factor(SEX)   1    196.01 10391 2557.7
+- TOT_CHOL      1    357.97 10553 2575.7
+- BP_SYS        1    701.23 10896 2612.8
+
+Step:  AIC=2535.77
+BMI ~ factor(SEX) + BP_SYS + TOT_CHOL + factor(HYP2)
+
+               Df Sum of Sq   RSS    AIC
+- factor(HYP2)  2     27.38 10224 2534.9
+&lt;none&gt;                      10197 2535.8
+- factor(SEX)   1    194.13 10391 2555.7
+- TOT_CHOL      1    368.91 10566 2575.1
+- BP_SYS        1    749.08 10946 2616.1
+
+Step:  AIC=2534.89
+BMI ~ factor(SEX) + BP_SYS + TOT_CHOL
+
+              Df Sum of Sq   RSS    AIC
+&lt;none&gt;                     10224 2534.9
+- factor(SEX)  1    229.57 10454 2558.7
+- TOT_CHOL     1    381.29 10605 2575.4
+- BP_SYS       1   1051.20 11275 2646.6</code></pre>
+</div>
+</div>
+<p>final model로 sex와 total cholesterol, SBP 변수만 남고 나머지는 제거된 것을 확인할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(final_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = BMI ~ factor(SEX) + BP_SYS + TOT_CHOL, data = data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.0439 -1.9979 -0.1247  1.7071 13.8900 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  12.236726   0.893062  13.702  &lt; 2e-16 ***
+factor(SEX)2 -0.904062   0.177296  -5.099 3.98e-07 ***
+BP_SYS        0.069729   0.006390  10.912  &lt; 2e-16 ***
+TOT_CHOL      0.017177   0.002614   6.572 7.51e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.971 on 1158 degrees of freedom
+Multiple R-squared:  0.1677,    Adjusted R-squared:  0.1655 
+F-statistic: 77.76 on 3 and 1158 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section>
+<section id="linear-regression의-통계적-가정" class="level2">
+<h2 class="anchored" data-anchor-id="linear-regression의-통계적-가정">Linear regression의 통계적 가정</h2>
+<p>선형회귀분석을 수행하면서 체크해야할 통계적 가정은 크게 독립성, 선형성, 정규성, 등분산성이 있습니다. 관련된 여러 방법들을 살펴봅시다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co">#모델</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(BMI <span class="sc">~</span> <span class="fu">factor</span>(SEX) <span class="sc">+</span> AGE <span class="sc">+</span> BP_SYS <span class="sc">+</span> TOT_CHOL <span class="sc">+</span> <span class="fu">factor</span>(HYP2), <span class="at">data=</span>data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="독립성-independence" class="level3">
+<h3 class="anchored" data-anchor-id="독립성-independence">독립성 (independence)</h3>
+</section>
+<section id="variation-inflation-factor-vif" class="level3">
+<h3 class="anchored" data-anchor-id="variation-inflation-factor-vif">Variation inflation factor (VIF)</h3>
+<p>다중공선성을 확인하는 VIF가 10이 넘는지 확인합니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("car")</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'car' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: carData</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'carData' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'car'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    recode</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 GVIF Df GVIF^(1/(2*Df))
+factor(SEX)  1.085004  1        1.041635
+AGE          1.135375  1        1.065540
+BP_SYS       2.023403  1        1.422464
+TOT_CHOL     1.039765  1        1.019689
+factor(HYP2) 1.871674  2        1.169654</code></pre>
+</div>
+</div>
+</section>
+<section id="선형성-linearity" class="level3">
+<h3 class="anchored" data-anchor-id="선형성-linearity">선형성 (linearity)</h3>
+<p>plot() 함수를 사용하면 다양한 통계적 가정에 관련된 그래프를 볼 수 있습니다. 잔차에 대한 선형성을 확인합니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lm_fit, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="정규성-normality" class="level3">
+<h3 class="anchored" data-anchor-id="정규성-normality">정규성 (normality)</h3>
+<p>Q-Q plot을 그려 직선의 형태를 띄고 있는지 확인합니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lm_fit, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>또는 잔차에 대한 정규성 검정을 실시합니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(lm_fit<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  lm_fit$residuals
+W = 0.97711, p-value = 1.352e-12</code></pre>
+</div>
+</div>
+</section>
+<section id="등분산성-homoscedasticity" class="level3">
+<h3 class="anchored" data-anchor-id="등분산성-homoscedasticity">등분산성 (homoscedasticity)</h3>
+<p>마찬가지로 등분산성도 residual 값이 균등하게 퍼져있는질 눈으로 체크하여 판단할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lm_fit, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>또는 검정을 통해서도 확인할 수 있습니다. 여기서 귀무가설이 분산이 동질하다 (등분산성이다)는 것을 유의하세요.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ncvTest</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Non-constant Variance Score Test 
+Variance formula: ~ fitted.values 
+Chisquare = 3.987694, Df = 1, p = 0.045834</code></pre>
+</div>
+</div>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
