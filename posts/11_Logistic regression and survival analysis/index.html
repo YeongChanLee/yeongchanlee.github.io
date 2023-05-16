@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Yeong Chan Lee - 11_Logistic regression and survival analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Yeong Chan Lee</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../about.html" aria-current="page">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">11_Logistic regression and survival analysis</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title d-none d-lg-block">11_Logistic regression and survival analysis</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../about.html" class="sidebar-item-text sidebar-link">About</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Posts</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/01_Hello World/index.html" class="sidebar-item-text sidebar-link">01_Hello World</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/02_Data types and structures/index.html" class="sidebar-item-text sidebar-link">02_Data types and structures</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/03_Descriptive analysis/index.html" class="sidebar-item-text sidebar-link">03_Descriptive analysis</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/04_Probability distribution and estimation/index.html" class="sidebar-item-text sidebar-link">04_Probability distribution &amp; estimation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/05_Hypothesis testing/index.html" class="sidebar-item-text sidebar-link">05_Hypothesis testing</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/06_Nonparametric methods/index.html" class="sidebar-item-text sidebar-link">06_Nonparametric methods</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/07_Categorical data analysis/index.html" class="sidebar-item-text sidebar-link">07_Categorical data analysis</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/09_Data handling with R/index.html" class="sidebar-item-text sidebar-link">09_Data handling with R</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/10_Regression and correlation methods/index.html" class="sidebar-item-text sidebar-link">10_Regression and correlation methods</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/11_Logistic regression and survival analysis/index.html" class="sidebar-item-text sidebar-link active">11_Logistic regression and survival analysis</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">11-0. Load data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dplyr' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'data.table'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:dplyr':
+
+    between, first, last</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(moonBook)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>로지스틱 회귀분석과 생존분석을 위해 중간고사 데이터와 framingham cohort dataset을 불러오겠습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/hyp_ihd_cohort.csv"</span>, <span class="at">data.table =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>HYP2 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(data<span class="sc">$</span>BP_SYS <span class="sc">&lt;</span> <span class="dv">140</span>, <span class="dv">0</span>, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">ifelse</span>(<span class="fu">between</span>(data<span class="sc">$</span>BP_SYS, <span class="dv">140</span>, <span class="dv">160</span>), <span class="dv">1</span>, </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">ifelse</span>(data<span class="sc">$</span>BP_SYS <span class="sc">&gt;</span> <span class="dv">160</span>, <span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>)))</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("riskCommunicator")</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(riskCommunicator)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'riskCommunicator' was built under R version 4.2.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(framingham)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>framingham <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(framingham)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>fr <span class="ot">&lt;-</span> <span class="fu">filter</span>(framingham, PERIOD <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mytable</span>(CVD<span class="sc">~</span>SEX<span class="sc">+</span>AGE<span class="sc">+</span>TOTCHOL<span class="sc">+</span>SYSBP<span class="sc">+</span>DIABP<span class="sc">+</span>CURSMOKE, <span class="at">data=</span>fr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+     Descriptive Statistics by 'CVD'    
+————————————————————————————————————————— 
+               0            1         p  
+            (N=3277)     (N=1157)  
+————————————————————————————————————————— 
+ SEX                                0.000
+   - 1    1258 (38.4%) 686 (59.3%)       
+   - 2    2019 (61.6%) 471 (40.7%)       
+ AGE      48.7 ±  8.4  53.5 ±  8.3  0.000
+ TOTCHOL  233.6 ± 42.9 246.7 ± 47.9 0.000
+ SYSBP    129.7 ± 20.6 142.1 ± 24.8 0.000
+ DIABP    81.6 ± 11.3  87.2 ± 13.2  0.000
+ CURSMOKE                           0.027
+   - 0    1698 (51.8%) 555 (48.0%)       
+   - 1    1579 (48.2%) 602 (52.0%)       
+————————————————————————————————————————— </code></pre>
+</div>
+</div>
+</section>
+<section id="logistic-regression" class="level2">
+<h2 class="anchored" data-anchor-id="logistic-regression">11-1. Logistic regression</h2>
+<p>회귀분석의 주요 관심사인 coefficient의 추정을 할 때 보통 <span class="math inline">\(e^\beta\)</span> 로 해석합니다. summary()함수에서 보여지는 estimate는 그냥 <span class="math inline">\(\beta\)</span> 이기 때문에 exponential을 취해주어야 합니다. moonbook패키지의 extractOR() 함수를 활용하면 쉽게 구할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(IHD <span class="sc">~</span> <span class="fu">factor</span>(SEX) <span class="sc">+</span> AGE <span class="sc">+</span> BMI <span class="sc">+</span> BP_SYS <span class="sc">+</span> TOT_CHOL <span class="sc">+</span> <span class="fu">factor</span>(HYP2), <span class="at">data=</span>data, <span class="at">family=</span><span class="st">"binomial"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = IHD ~ factor(SEX) + AGE + BMI + BP_SYS + TOT_CHOL + 
+    factor(HYP2), family = "binomial", data = data)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.2036  -0.4129  -0.2634  -0.1805   3.0637  
+
+Coefficients:
+                Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)    -9.745888   1.732280  -5.626 1.84e-08 ***
+factor(SEX)2    0.740593   0.250409   2.958   0.0031 ** 
+AGE             0.056683   0.008382   6.762 1.36e-11 ***
+BMI             0.063424   0.038442   1.650   0.0990 .  
+BP_SYS          0.025753   0.013264   1.942   0.0522 .  
+TOT_CHOL       -0.003417   0.003647  -0.937   0.3487    
+factor(HYP2)1  -0.119433   0.414998  -0.288   0.7735    
+factor(HYP2)2 -16.355433 577.051406  -0.028   0.9774    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 613.28  on 1161  degrees of freedom
+Residual deviance: 520.56  on 1154  degrees of freedom
+AIC: 536.56
+
+Number of Fisher Scoring iterations: 15</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extractOR</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                OR  lcl  ucl      p
+(Intercept)   0.00 0.00 0.00 0.0000
+factor(SEX)2  2.10 1.28 3.43 0.0031
+AGE           1.06 1.04 1.08 0.0000
+BMI           1.07 0.99 1.15 0.0990
+BP_SYS        1.03 1.00 1.05 0.0522
+TOT_CHOL      1.00 0.99 1.00 0.3487
+factor(HYP2)1 0.89 0.39 2.00 0.7735
+factor(HYP2)2 0.00 0.00  Inf 0.9774</code></pre>
+</div>
+</div>
+<section id="범주형-변수와-factor" class="level3">
+<h3 class="anchored" data-anchor-id="범주형-변수와-factor">범주형 변수와 factor</h3>
+<p>범주형 변수인 SEX에 대한 OR을 해석하기 위해선 레퍼런스 군이 무엇인지 잘 알아야 합니다. 그러기 위해 범주형 변수로 처리하기 위한 factor에 대해 다시 한 번 살펴보겠습니다. factor는 원하는 변수를 더미 변수로 만들어줍니다. 더미변수로 만들어지면 특정한 그룹은 레퍼런스 그룹이 됩니다.</p>
+<p><img src="images/i1.jpg" class="img-fluid"></p>
+<p>지난번 10강의 예시입니다. 정상 그룹을 (0, 0)으로 코딩한다고 합시다. 그러면 정상 그룹이 레퍼런스 그룹이 됩니다. (0, 0)이 들어갈 경우 회귀식은 <span class="math inline">\(y=a+e\)</span> 이 됩니다. 이번엔 <span class="math inline">\(\beta_1, \beta_2\)</span> 가 추가 되었을 때를 함께 비교해보세요. 정상군 대비 고혈압 1기에 대한 <span class="math inline">\(\beta_1\)</span>, 고혈압 2기에 대한 <span class="math inline">\(\beta_2\)</span> 효과가 추가되었습니다. 즉, 레퍼런스군 대비 관심군의 효과로 해석할 수 있습니다.</p>
+<p>R에서 factor로 더미변수화할 때 알파벳, 숫자 등 순서를 따졌을 때 제일 앞에 있는 경우를 레퍼런스로 봅니다. 그러니까 지금 HYP2변수 처럼 0, 1, 2 로 코딩되어 있다면 0인 그룹이 레퍼런스 그룹이 됩니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0 1 2
+Levels: 0 1 2</code></pre>
+</div>
+</div>
+<p>Levels에 0, 1, 2 순으로 더미변수가 만들어졌다는 뜻입니다.</p>
+<p>보통 우리는 정상 대비 관심군의 효과를 궁금해하므로 정상군, 또는 레퍼런스 군으로 둘 그룹을 0으로 코딩하면 됩니다.</p>
+<p>SEX 변수는 1, 2로만 코딩이 되어 있기 때문에 1이 레퍼런스 그룹이 됩니다. 그러면 남자 대비 여자의 위험도가 2.1배 높다고 해석할 수 있습니다. 만약에 여자를 레퍼런스로 두려면 어떻게 해야할까요? ifelse()함수를 써서 새롭게 변수를 만들어주면 됩니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>SEX2 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(data<span class="sc">$</span>SEX <span class="sc">==</span> <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(IHD <span class="sc">~</span> <span class="fu">factor</span>(SEX2) <span class="sc">+</span> AGE <span class="sc">+</span> BMI <span class="sc">+</span> BP_SYS <span class="sc">+</span> TOT_CHOL <span class="sc">+</span> <span class="fu">factor</span>(HYP2), <span class="at">data=</span>data, <span class="at">family=</span><span class="st">"binomial"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">extractOR</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                OR  lcl  ucl      p
+(Intercept)   0.00 0.00 0.00 0.0000
+factor(SEX2)1 0.48 0.29 0.78 0.0031
+AGE           1.06 1.04 1.08 0.0000
+BMI           1.07 0.99 1.15 0.0990
+BP_SYS        1.03 1.00 1.05 0.0522
+TOT_CHOL      1.00 0.99 1.00 0.3487
+factor(HYP2)1 0.89 0.39 2.00 0.7735
+factor(HYP2)2 0.00 0.00  Inf 0.9774</code></pre>
+</div>
+</div>
+<p>여자 대비 남자의 위험도가 0.48배로 나왔습니다. 이는 2.10의 역수입니다.</p>
+<p>이번엔 framingham 데이터셋으로 해보겠습니다. 간단한 EDA를 해보겠습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>lm_fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD<span class="sc">~</span><span class="fu">factor</span>(SEX)<span class="sc">+</span>AGE<span class="sc">+</span>TOTCHOL<span class="sc">+</span>SYSBP<span class="sc">+</span>DIABP<span class="sc">+</span><span class="fu">factor</span>(CURSMOKE), <span class="at">data=</span>fr, <span class="at">family=</span><span class="st">"binomial"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = CVD ~ factor(SEX) + AGE + TOTCHOL + SYSBP + DIABP + 
+    factor(CURSMOKE), family = "binomial", data = fr)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.9130  -0.7797  -0.5323   0.9032   2.5986  
+
+Coefficients:
+                    Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)       -7.5745677  0.3911954 -19.363  &lt; 2e-16 ***
+factor(SEX)2      -1.0006086  0.0792484 -12.626  &lt; 2e-16 ***
+AGE                0.0568541  0.0049200  11.556  &lt; 2e-16 ***
+TOTCHOL            0.0045542  0.0008512   5.350 8.79e-08 ***
+SYSBP              0.0138035  0.0027534   5.013 5.35e-07 ***
+DIABP              0.0119336  0.0048969   2.437   0.0148 *  
+factor(CURSMOKE)1  0.3161914  0.0787249   4.016 5.91e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 5036.2  on 4381  degrees of freedom
+Residual deviance: 4413.7  on 4375  degrees of freedom
+  (52 observations deleted due to missingness)
+AIC: 4427.7
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extractOR</span>(lm_fit, <span class="at">digits =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     OR   lcl   ucl      p
+(Intercept)       0.001 0.000 0.001 0.0000
+factor(SEX)2      0.368 0.315 0.429 0.0000
+AGE               1.059 1.048 1.069 0.0000
+TOTCHOL           1.005 1.003 1.006 0.0000
+SYSBP             1.014 1.008 1.019 0.0000
+DIABP             1.012 1.002 1.022 0.0148
+factor(CURSMOKE)1 1.372 1.176 1.601 0.0001</code></pre>
+</div>
+</div>
+<p>사실 여기에는 missing value를 포함하는 행이 있습니다. missing value를 확인하지 않으면 분석 결과를 잘못 리포트할 수 있으니 꼭 확인하시기 바랍니다.</p>
+</section>
+<section id="hosmer-lemeshows-goodness-of-fit-test" class="level3">
+<h3 class="anchored" data-anchor-id="hosmer-lemeshows-goodness-of-fit-test">Hosmer-Lemeshow’s goodness-of-fit test</h3>
+<p>모델의 적합도를 확인하는 적합도 검정입니다. p-value 가 0.05보다 크면 모델이 적합하다고 볼 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("glmtoolbox")</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmtoolbox)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'glmtoolbox' was built under R version 4.2.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hltest</span>(lm_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   The Hosmer-Lemeshow goodness-of-fit test
+
+ Group Size Observed  Expected
+     1  438       18  23.22501
+     2  438       38  39.10919
+     3  438       51  56.42704
+     4  438       78  73.52896
+     5  438       86  91.19112
+     6  438      113 111.10292
+     7  438      142 133.65569
+     8  438      186 160.54835
+     9  438      189 195.31230
+    10  438      243 260.14718
+    11    2        2   1.75224
+
+         Statistic =  13.17207 
+degrees of freedom =  9 
+           p-value =  0.15497 </code></pre>
+</div>
+</div>
+<p>p-value가 0.05보다 크므로 모델이 적합하다고 할 수 있습니다.</p>
+</section>
+<section id="pseudo-r-squared" class="level3">
+<h3 class="anchored" data-anchor-id="pseudo-r-squared">Pseudo R squared</h3>
+<p>선형회귀분석에서 결정계수 R squared를 구할 수 있었던 것처럼 로지스틱 회귀분석 (일반화선형모형) 에서도 결정계수를 구할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DescTools)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'DescTools'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:data.table':
+
+    %like%</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PseudoR2</span>(lm_fit, <span class="at">which=</span><span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       McFadden     McFaddenAdj        CoxSnell      Nagelkerke   AldrichNelson 
+      0.1236062       0.1208263       0.1324303       0.1938557       0.1243888 
+VeallZimmermann           Efron McKelveyZavoina            Tjur             AIC 
+      0.2326198       0.1347218       0.2199058       0.1372955    4427.6875565 
+            BIC          logLik         logLik0              G2 
+   4472.3843801   -2206.8437782   -2518.0960509     622.5045453 </code></pre>
+</div>
+</div>
+<p>다양하게 있는데 McFaddenAdj나 Nagelkerke 방식을 많이 쓰는 것 같습니다. 그런데 <a href="https://statisticalhorizons.com/r2logistic/">Paul Allison(University of Pennsylvania)의 포스트</a>를 보시면 Tjur결과가 좀 더 믿을만해 보인다고 합니다. 관심있으신 분들은 한 번 보세요.</p>
+</section>
+</section>
+<section id="survival-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="survival-analysis">11-2. Survival analysis</h2>
+<p>생존분석은 시간에 따른 사망이나 재발등의 변화를 관찰하는 분석으로 시간이라는 새로운 변수가 필요합니다. 즉, 관찰을 시작한 시점부터 관찰을 마친 시점까지의 시간을 계산할 수 있어야 합니다. framingham dataset에는 CVD 발생에 대한 변수(CVD)가 있고 이벤트 발생 또는 마지막 follow-up 시점을 기록한 TIME 변수 (TIMECVD)가 있습니다. 이를 활용하여 생존분석을 하겠습니다.</p>
+<section id="kaplan-meier-plot" class="level3">
+<h3 class="anchored" data-anchor-id="kaplan-meier-plot">Kaplan-Meier plot</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("survminer") # ggplot for survival analysis</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survminer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'survminer' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: ggplot2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: ggpubr</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggpubr' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'survminer'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:survival':
+
+    myeloma</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fr2 <span class="ot">&lt;-</span> <span class="fu">filter</span>(fr, TIMECVD <span class="sc">&gt;</span> <span class="dv">0</span> )</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>surv_object <span class="ot">&lt;-</span> <span class="fu">Surv</span>(fr2<span class="sc">$</span>TIMECVD, fr2<span class="sc">$</span>CVD)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>surv_fit <span class="ot">&lt;-</span> <span class="fu">survfit</span>(surv_object <span class="sc">~</span> SEX, <span class="at">data=</span>fr2)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsurvplot</span>(surv_fit,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">data=</span>fr2,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">conf.int =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">ggtheme =</span> <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">20</span>),</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">pval=</span><span class="cn">TRUE</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>           )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>ggsurvplot은 다양한 옵션이 있어서 더 많은 정보를 담을 수 있습니다. <a href="https://rpubs.com/KOSUNGWOO/855450">이런 포스트</a>도 확인해보세요.</p>
+</section>
+<section id="log-rank-test" class="level3">
+<h3 class="anchored" data-anchor-id="log-rank-test">Log-rank test</h3>
+<p>집단간의 생존율을 비교할 땐 survdiff()함수를 활용해서 log rank test를 할 수 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>surv_object <span class="ot">&lt;-</span> <span class="fu">Surv</span>(fr2<span class="sc">$</span>TIMECVD, fr2<span class="sc">$</span>CVD)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">survdiff</span>(surv_object <span class="sc">~</span> SEX, <span class="at">data=</span>fr2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+survdiff(formula = surv_object ~ SEX, data = fr2)
+
+         N Observed Expected (O-E)^2/E (O-E)^2/V
+SEX=1 1837      579      397      83.6       139
+SEX=2 2436      417      599      55.4       139
+
+ Chisq= 139  on 1 degrees of freedom, p= &lt;2e-16 </code></pre>
+</div>
+</div>
+<p>p-value가 0.05보다 작으므로 성별간 생존율의 차이가 통계적으로 유의하다고 할 수 있습니다.</p>
+</section>
+<section id="cox-proportional-hazard-model" class="level3">
+<h3 class="anchored" data-anchor-id="cox-proportional-hazard-model">Cox proportional hazard model</h3>
+<p>Cox regression도 그간 해온 회귀분석과 유사합니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>fr2<span class="sc">$</span>SEX_F <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(fr2<span class="sc">$</span>SEX)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>fr2<span class="sc">$</span>CURSMOKE_F <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(fr2<span class="sc">$</span>CURSMOKE)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>surv_object <span class="ot">&lt;-</span> <span class="fu">Surv</span>(fr2<span class="sc">$</span>TIMECVD, fr2<span class="sc">$</span>CVD)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>cox_fit <span class="ot">&lt;-</span> <span class="fu">coxph</span>(surv_object <span class="sc">~</span> SEX_F<span class="sc">+</span>AGE<span class="sc">+</span>TOTCHOL<span class="sc">+</span>SYSBP<span class="sc">+</span>DIABP<span class="sc">+</span>CURSMOKE_F, <span class="at">data=</span>fr2)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cox_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+coxph(formula = surv_object ~ SEX_F + AGE + TOTCHOL + SYSBP + 
+    DIABP + CURSMOKE_F, data = fr2)
+
+  n= 4222, number of events= 986 
+   (51 observations deleted due to missingness)
+
+                  coef  exp(coef)   se(coef)       z Pr(&gt;|z|)    
+SEX_F2      -0.8806877  0.4144978  0.0691337 -12.739  &lt; 2e-16 ***
+AGE          0.0557665  1.0573508  0.0042997  12.970  &lt; 2e-16 ***
+TOTCHOL      0.0032562  1.0032615  0.0006585   4.945 7.62e-07 ***
+SYSBP        0.0152523  1.0153692  0.0023050   6.617 3.66e-11 ***
+DIABP        0.0099366  1.0099861  0.0041876   2.373   0.0177 *  
+CURSMOKE_F1  0.3229036  1.3811322  0.0673202   4.797 1.61e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+            exp(coef) exp(-coef) lower .95 upper .95
+SEX_F2         0.4145     2.4126     0.362    0.4746
+AGE            1.0574     0.9458     1.048    1.0663
+TOTCHOL        1.0033     0.9967     1.002    1.0046
+SYSBP          1.0154     0.9849     1.011    1.0200
+DIABP          1.0100     0.9901     1.002    1.0183
+CURSMOKE_F1    1.3811     0.7240     1.210    1.5759
+
+Concordance= 0.733  (se = 0.007 )
+Likelihood ratio test= 688.7  on 6 df,   p=&lt;2e-16
+Wald test            = 665.1  on 6 df,   p=&lt;2e-16
+Score (logrank) test = 693.9  on 6 df,   p=&lt;2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">extractHR</span>(cox_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              HR  lcl  ucl     p
+SEX_F2      0.41 0.36 0.47 0.000
+AGE         1.06 1.05 1.07 0.000
+TOTCHOL     1.00 1.00 1.00 0.000
+SYSBP       1.02 1.01 1.02 0.000
+DIABP       1.01 1.00 1.02 0.018
+CURSMOKE_F1 1.38 1.21 1.58 0.000</code></pre>
+</div>
+</div>
+</section>
+<section id="proportional-hazard-assumption" class="level3">
+<h3 class="anchored" data-anchor-id="proportional-hazard-assumption">Proportional hazard assumption</h3>
+<p>Cox regression은 비례위험가정을 하기 때문에 이 가정이 만족하지 않으면 결과가 왜곡될 수 있습니다. 리뷰어들이 종종 이 가정에 대해 물어보기 때문에 꼭 체크할 필요도 있습니다.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>cox_ph <span class="ot">&lt;-</span> <span class="fu">cox.zph</span>(cox_fit)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>cox_ph</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              chisq df      p
+SEX_F       0.51596  1 0.4726
+AGE         0.02114  1 0.8844
+TOTCHOL     9.21565  1 0.0024
+SYSBP       3.74239  1 0.0530
+DIABP       3.80220  1 0.0512
+CURSMOKE_F  0.00136  1 0.9705
+GLOBAL     14.16572  6 0.0278</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcoxzph</span>(cox_ph) <span class="co"># 데이터 수가 많으면 매우 느립니다.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
